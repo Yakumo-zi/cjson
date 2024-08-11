@@ -72,9 +72,16 @@ cjson_parse_result cjson_parse(cjson_value *v, const char *json) {
   cjson_context c;
   assert(v != NULL);
   c.json = json;
-  v->type = CJSON_TRUE;
+  v->type = CJSON_NULL;
   cjson_parse_whitespace(&c);
-  return cjson_parse_value(&c, v);
+  int ret = cjson_parse_value(&c, v);
+  if (ret == CJSON_PARSE_OK) {
+    if (*c.json != '\0') {
+      ret = CJSON_PARSE_ROOT_NOT_SINGULAR;
+      v->type = CJSON_NULL;
+    }
+  }
+  return ret;
 }
 
 cjson_type cjson_get_type(const cjson_value *v) { return v->type; }

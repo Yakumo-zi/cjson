@@ -22,6 +22,14 @@ static int test_pass = 0;
 #define EXPECT_EQ_INT(expect, actual)                                          \
   EXPECT_EQ_BASE((expect) == (actual), expect, actual, "%d")
 
+#define TEST_ERROR(error, json)                                                \
+  do {                                                                         \
+    cjson_value v;                                                             \
+    v.type = CJSON_FALSE;                                                      \
+    EXPECT_EQ_INT(error, cjson_parse(&v, json));                               \
+    EXPECT_EQ_INT(CJSON_NULL, cjson_get_type(&v));                             \
+  } while (0)
+
 static void test_parse_null() {
   cjson_value v;
   v.type = CJSON_TRUE;
@@ -41,10 +49,15 @@ static void test_parse_false() {
   EXPECT_EQ_INT(CJSON_FALSE, cjson_get_type(&v));
 }
 
+static void test_root_not_singular() {
+  TEST_ERROR(CJSON_PARSE_ROOT_NOT_SINGULAR, "null x");
+}
+
 static void test_parse() {
   test_parse_null();
   test_parse_true();
   test_parse_false();
+  test_root_not_singular();
 }
 
 int main() {
