@@ -29,6 +29,10 @@ typedef enum {
   CJSON_PARSE_ROOT_NOT_SINGULAR,
 }cjson_parse_result;
 
+typedef struct {
+  const char* json;
+}cjson_context;
+
 cjson_parse_result cjson_parse(cjson_value *v,const char* json);
 cjson_type cjson_get_type(const cjson_value*);
 #endif

@@ -28,8 +28,24 @@ static void test_parse_null() {
   EXPECT_EQ_INT(CJSON_PARSE_OK, cjson_parse(&v, "null"));
   EXPECT_EQ_INT(CJSON_NULL, cjson_get_type(&v));
 }
+static void test_parse_true() {
+  cjson_value v;
+  v.type = CJSON_TRUE;
+  EXPECT_EQ_INT(CJSON_PARSE_OK, cjson_parse(&v, "true"));
+  EXPECT_EQ_INT(CJSON_TRUE, cjson_get_type(&v));
+}
+static void test_parse_false() {
+  cjson_value v;
+  v.type = CJSON_TRUE;
+  EXPECT_EQ_INT(CJSON_PARSE_OK, cjson_parse(&v, "false"));
+  EXPECT_EQ_INT(CJSON_FALSE, cjson_get_type(&v));
+}
 
-static void test_parse() { test_parse_null(); }
+static void test_parse() {
+  test_parse_null();
+  test_parse_true();
+  test_parse_false();
+}
 
 int main() {
   test_parse();
