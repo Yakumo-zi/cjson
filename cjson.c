@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #define EXPECT(c, ch)                                                          \
   do {                                                                         \
     assert(*c->json == (ch));                                                  \
@@ -53,6 +54,21 @@ static int cjson_parse_keyword(cjson_context *c, cjson_value *v,
   return res;
 }
 
+static int cjson_parse_number(cjson_context *c, cjson_value *v) {
+#define ISDIGIT(ch) ((ch) >= '0' && (ch) <= '9')
+#define ISDIGIT1TO9(ch) ((ch) >= '1' && (ch) <= '9')
+  char *end;
+  v->n = strtod(c->json, &end);
+  if (c->json == end) {
+    return CJSON_PARSE_INVALID_VALUE;
+  }
+  c->json = end;
+  v->type = CJSON_NUMBER;
+  return CJSON_PARSE_OK;
+#undef ISDIGIT
+#undef ISDIGIT1TO9
+}
+
 static int cjson_parse_value(cjson_context *c, cjson_value *v) {
   switch (*c->json) {
   case 'n':
@@ -64,7 +80,7 @@ static int cjson_parse_value(cjson_context *c, cjson_value *v) {
   case '\0':
     return CJSON_PARSE_EXPECT_VALUE;
   default:
-    return CJSON_PARSE_INVALID_VALUE;
+    return cjson_parse_number(c, v);
   }
 }
 
@@ -85,3 +101,8 @@ cjson_parse_result cjson_parse(cjson_value *v, const char *json) {
 }
 
 cjson_type cjson_get_type(const cjson_value *v) { return v->type; }
+
+double cjson_get_number(const cjson_value *v) {
+  assert(v != NULL && v->type == CJSON_NUMBER);
+  return v->n;
+}

@@ -3,10 +3,14 @@
 
 // JSON-text = ws value ws
 // ws = *(%x20 | %x09 | %x0A | %x0D)
-// value = null | false | true 
+// value = null | false | true  | number
 // null  = "null"
 // false = "false"
 // true  = "true"
+// number = [ "-" ] int [ frac ] [ exp ]
+// int = "0" | digit1-9 *digit
+// frac = "." 1*digit
+// exp = ("e" | "E") ["-" | "+"] 1*digit
 
 typedef enum{
   CJSON_NULL,
@@ -19,6 +23,7 @@ typedef enum{
 }cjson_type;
 
 typedef struct{
+  double n;
   cjson_type type;
 } cjson_value;
 
@@ -35,4 +40,5 @@ typedef struct {
 
 cjson_parse_result cjson_parse(cjson_value *v,const char* json);
 cjson_type cjson_get_type(const cjson_value*);
+double cjson_get_number(const cjson_value*);
 #endif
