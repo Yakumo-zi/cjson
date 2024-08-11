@@ -4,6 +4,8 @@ project(cjson)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;MinSizeRel;RelWithDebInfo")
 
-aux_source_directory(. DIR_SRCS)
+add_library(cjson cjson.c cjson.h)
 
-add_library(cjson ${DIR_SRCS})
+add_executable(test test.c)
+
+target_link_libraries(test  cjson)
